@@ -86,25 +86,18 @@ export default function FileManager() {
       <div className="flex-1 min-w-0 space-y-6">
         <FileUploader folderId={currentFolderId} onUpload={handleUpload} />
 
-        <div>
-          {loading ? (
-            <div className="flex justify-center items-center h-48">
-              <div className="w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : (
-            <FileGallery
-              files={files}
-              search={search}
-              sort={sort}
-              order={order}
-              onSearchChange={v => setSearch(v)}
-              onSortChange={v => setSort(v)}
-              onOrderToggle={() => setOrder(o => o === 'asc' ? 'desc' : 'asc')}
-              onDelete={deleteFile}
-              onView={f => setViewerFile(f)}
-            />
-          )}
-        </div>
+        <FileGallery
+          files={files}
+          loading={loading}
+          search={search}
+          sort={sort}
+          order={order}
+          onSearchChange={v => setSearch(v)}
+          onSortChange={v => setSort(v)}
+          onOrderToggle={() => setOrder(o => o === 'asc' ? 'desc' : 'asc')}
+          onDelete={deleteFile}
+          onView={f => setViewerFile(f)}
+        />
       </div>
 
       {/* Mobile folder selector */}
