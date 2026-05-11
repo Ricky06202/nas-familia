@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-echo "🚀 La Familia Sanjur NAS - Build"
-echo "================================"
+TARGET=${TARGET:-amd64}
+OUTPUT="nas-familia"
+
+case "$TARGET" in
+  amd64)   GOARCH=amd64 GOARM=""  OUTPUT="nas-familia-amd64" ;;
+  arm64)   GOARCH=arm64 GOARM=""  OUTPUT="nas-familia-arm64" ;;
+  arm)     GOARCH=arm   GOARM=7   OUTPUT="nas-familia-arm"   ;;
+  *)
+    echo "❌ Unknown target: $TARGET"
+    echo "   Options: amd64 (default), arm64, arm"
+    exit 1
+    ;;
+esac
+
+echo "🚀 La Familia Sanjur NAS - Build (target: $TARGET)"
+echo "================================================"
 echo ""
 
 # 1. Build frontend
@@ -18,18 +32,17 @@ mkdir -p backend/frontend
 rm -rf backend/frontend/dist
 cp -r frontend/dist backend/frontend/dist
 
-# 3. Build Go backend
-echo "🔧 Building Go backend..."
+# 3. Cross-compile Go backend
+echo "🔧 Building Go backend (GOOS=linux GOARCH=$GOARCH)..."
 cd backend
-go build -ldflags="-s -w" -o ../nas-familia .
+GOOS=linux GOARCH=$GOARCH GOARM=$GOARM go build -ldflags="-s -w" -o "../$OUTPUT" .
 cd ..
 
 echo ""
-echo "✅ Build complete!"
-echo "📁 Output: ./nas-familia (single binary)"
+echo "✅ Build complete! Output: $OUTPUT"
 echo ""
 echo "Usage:"
-echo "  ./nas-familia"
+echo "  ./$OUTPUT"
 echo ""
 echo "Environment variables:"
 echo "  PORT              - Server port (default: 8080)"
