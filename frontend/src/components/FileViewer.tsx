@@ -28,11 +28,6 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
   const viewUrl = api.files.getViewUrl(file.id);
   const downloadUrl = api.files.getDownloadUrl(file.id);
 
-  function getOfficeOnlineUrl() {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(origin + viewUrl)}`;
-  }
-
 
 
   function getIcon() {
@@ -113,27 +108,18 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
           {isOffice(file) && (
             <div className="w-full h-[70vh] flex flex-col">
               <iframe
-                src={getOfficeOnlineUrl()}
+                src={viewUrl}
                 className="w-full flex-1 rounded-lg"
                 title={file.name}
               />
               <div className="flex items-center justify-center gap-4 mt-4 text-sm text-gray-500">
-                <span>¿No se ve? </span>
-                <a
-                  href={getOfficeOnlineUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-400 hover:text-indigo-300 underline"
-                >
-                  Abrir en Microsoft Office Online
-                </a>
-                <span>·</span>
+                <span>El navegador no puede mostrarlo? </span>
                 <a
                   href={downloadUrl}
                   download
                   className="text-indigo-400 hover:text-indigo-300 underline"
                 >
-                  Descargar
+                  Descargar y abrir con Word/Excel/PowerPoint
                 </a>
               </div>
             </div>
