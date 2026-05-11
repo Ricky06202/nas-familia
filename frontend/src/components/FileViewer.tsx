@@ -28,6 +28,11 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
   const viewUrl = api.files.getViewUrl(file.id);
   const downloadUrl = api.files.getDownloadUrl(file.id);
 
+  function getGoogleViewUrl() {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(origin + viewUrl)}&embedded=true`;
+  }
+
 
 
   function getIcon() {
@@ -108,18 +113,27 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
           {isOffice(file) && (
             <div className="w-full h-[70vh] flex flex-col">
               <iframe
-                src={viewUrl}
+                src={getGoogleViewUrl()}
                 className="w-full flex-1 rounded-lg"
                 title={file.name}
               />
               <div className="flex items-center justify-center gap-4 mt-4 text-sm text-gray-500">
-                <span>El navegador no puede mostrarlo? </span>
+                <span>No se ve? </span>
+                <a
+                  href={getGoogleViewUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-400 hover:text-indigo-300 underline"
+                >
+                  Abrir en Google Docs
+                </a>
+                <span>·</span>
                 <a
                   href={downloadUrl}
                   download
                   className="text-indigo-400 hover:text-indigo-300 underline"
                 >
-                  Descargar y abrir con Word/Excel/PowerPoint
+                  Descargar
                 </a>
               </div>
             </div>
