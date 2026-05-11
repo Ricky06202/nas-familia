@@ -23,10 +23,6 @@ function isImage(file: File): boolean {
   return file.mime_type.startsWith('image/') && !file.mime_type.includes('svg');
 }
 
-function isDocument(file: File): boolean {
-  return /\.(pdf|doc|docx|txt|md)$/i.test(file.name);
-}
-
 function isVideo(file: File): boolean {
   return file.mime_type.startsWith('video/');
 }
@@ -34,6 +30,12 @@ function isVideo(file: File): boolean {
 function isAudio(file: File): boolean {
   return file.mime_type.startsWith('audio/');
 }
+
+function getExt(file: File) { return file.name.toLowerCase().slice(file.name.lastIndexOf('.')); }
+function isWord(file: File) { return ['.doc', '.docx'].includes(getExt(file)); }
+function isExcel(file: File) { return ['.xls', '.xlsx'].includes(getExt(file)); }
+function isPpt(file: File) { return ['.ppt', '.pptx'].includes(getExt(file)); }
+function isPdf(file: File) { return file.mime_type === 'application/pdf' || getExt(file) === '.pdf'; }
 
 function getIconForType(file: File): string {
   if (isImage(file)) {
@@ -45,8 +47,17 @@ function getIconForType(file: File): string {
   if (isAudio(file)) {
     return '<svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>';
   }
-  if (isDocument(file)) {
-    return '<svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>';
+  if (isPdf(file)) {
+    return '<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /><path d="M7 11l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>';
+  }
+  if (isWord(file)) {
+    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#1e40af" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l2 7 2-5 2 5 2-7"/></svg>';
+  }
+  if (isExcel(file)) {
+    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#059669" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l3 4-3 4m8-8l-3 4 3 4"/></svg>';
+  }
+  if (isPpt(file)) {
+    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#ea580c" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M9 9h5a2 2 0 012 2v1a2 2 0 01-2 2h-5V9z"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M12 14v3"/></svg>';
   }
   return '<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>';
 }
@@ -91,8 +102,8 @@ export default function FileGallery({
     if (typeFilter === 'images') result = result.filter(f => isImage(f));
     else if (typeFilter === 'videos') result = result.filter(f => isVideo(f));
     else if (typeFilter === 'audio') result = result.filter(f => isAudio(f));
-    else if (typeFilter === 'documents') result = result.filter(f => isDocument(f));
-    else if (typeFilter === 'other') result = result.filter(f => !isImage(f) && !isVideo(f) && !isAudio(f) && !isDocument(f));
+    else if (typeFilter === 'documents') result = result.filter(f => isPdf(f) || isWord(f) || isExcel(f) || isPpt(f));
+    else if (typeFilter === 'other') result = result.filter(f => !isImage(f) && !isVideo(f) && !isAudio(f) && !isPdf(f) && !isWord(f) && !isExcel(f) && !isPpt(f));
 
     return result;
   }, [files, typeFilter]);
