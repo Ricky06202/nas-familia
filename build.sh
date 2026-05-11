@@ -50,3 +50,24 @@ echo "  DB_PATH           - SQLite database path (default: ./data/nas-familia.db
 echo "  NAS_STORAGE_PATH  - File storage path (default: ./storage/files)"
 echo ""
 echo "The frontend is embedded in the binary. Just run it!"
+
+: <<'DEPLOY_NOTES'
+=== Despliegue en NAS (ARM) ===
+amado@NAS-FliaSanjur
+
+# 1. Bajar nueva version
+sudo rm -f nas-familia-arm
+sudo wget --no-check-certificate https://github.com/Ricky06202/nas-familia/releases/download/v1.0.0/nas-familia-arm
+sudo chmod +x nas-familia-arm
+
+# 2. Reiniciar servicio
+sudo /opt/etc/init.d/S99nas-familia restart
+
+# 3. Ver logs
+tail -f /opt/www/nas-familia/*.log
+
+# El init.d script ejecuta:
+#   /opt/www/nas-familia/nas-familia-arm
+# Variables de entorno configuradas alli:
+#   PORT, DB_PATH, NAS_STORAGE_PATH
+DEPLOY_NOTES
