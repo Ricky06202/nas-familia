@@ -43,8 +43,36 @@ func GetFiles(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "profile_id is required"})
 	}
 
+	query := database.DB.Where("profile_id = ?", profileID)
+
+	if folderID := c.QueryParam("folder_id"); folderID != "" {
+		query = query.Where("folder_id = ?", folderID)
+	} else if c.QueryParam("root") != "true" {
+		query = query.Where("folder_id IS NULL")
+	}
+
+	if search := c.QueryParam("search"); search != "" {
+		query = query.Where("original_name LIKE ?", "%"+search+"%")
+	}
+
+	sort := c.QueryParam("sort")
+	order := c.QueryParam("order")
+
+	if order != "asc" {
+		order = "desc"
+	}
+
+	switch sort {
+	case "name":
+		query = query.Order("original_name " + order)
+	case "size":
+		query = query.Order("size " + order)
+	default:
+		query = query.Order("created_at " + order)
+	}
+
 	var files []models.File
-	database.DB.Where("profile_id = ?", profileID).Order("created_at desc").Find(&files)
+	query.Find(&files)
 	return c.JSON(http.StatusOK, files)
 }
 
@@ -101,6 +129,12 @@ func UploadFile(c echo.Context) error {
 			Path:         uniqueName,
 		}
 		fmt.Sscanf(profileID, "%d", &fileModel.ProfileID)
+
+		if folderID := c.FormValue("folder_id"); folderID != "" {
+			var fid uint
+			fmt.Sscanf(folderID, "%d", &fid)
+			fileModel.FolderID = &fid
+		}
 
 		if isImage(fileModel.MimeType) {
 			thumbPath := generateThumbnail(destPath, uniqueName)

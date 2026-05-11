@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { api } from '../lib/api';
 
-export default function FileUploader() {
+export default function FileUploader({ onUpload }: { onUpload?: () => void }) {
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -49,9 +49,11 @@ export default function FileUploader() {
     setSuccess('');
 
     try {
-      const uploaded = await api.files.upload(profileId, fileList);
-      setSuccess(`¡${uploaded.length} archivo(s) subido(s) correctamente!`);
-      window.dispatchEvent(new CustomEvent('files-uploaded', { detail: uploaded }));
+      const folderIdStr = localStorage.getItem('nas_folder_id');
+      const folderId = folderIdStr ? Number(folderIdStr) : undefined;
+      await api.files.upload(profileId, fileList, folderId);
+      setSuccess(`¡Archivos subidos correctamente!`);
+      onUpload?.();
     } catch {
       setError('Error al subir archivos');
     } finally {

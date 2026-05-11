@@ -32,5 +32,5 @@ func Init() {
 		panic("failed to connect database: " + err.Error())
 	}
 
-	DB.AutoMigrate(&models.Profile{}, &models.File{})
+	DB.AutoMigrate(&models.Profile{}, &models.Folder{}, &models.File{})
 }

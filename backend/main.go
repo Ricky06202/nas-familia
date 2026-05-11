@@ -43,6 +43,13 @@ func main() {
 	api.DELETE("/files/:id", handlers.DeleteFile)
 	api.GET("/files/:id/download", handlers.DownloadFile)
 	api.GET("/files/:id/thumbnail", handlers.GetThumbnail)
+	api.GET("/files/:id/view", handlers.ViewFile)
+	api.PUT("/files/:id/move", handlers.MoveFile)
+
+	api.GET("/folders", handlers.GetFolders)
+	api.POST("/folders", handlers.CreateFolder)
+	api.PUT("/folders/:id", handlers.RenameFolder)
+	api.DELETE("/folders/:id", handlers.DeleteFolder)
 
 	subFS, err := fs.Sub(staticFiles, "frontend/dist")
 	if err != nil {
