@@ -28,10 +28,7 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
   const viewUrl = api.files.getViewUrl(file.id);
   const downloadUrl = api.files.getDownloadUrl(file.id);
 
-  function getGoogleViewUrl() {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(origin + viewUrl)}&embedded=true`;
-  }
+
 
 
 
@@ -111,31 +108,23 @@ export default function FileViewer({ file, onClose }: { file: File; onClose: () 
           )}
 
           {isOffice(file) && (
-            <div className="w-full h-[70vh] flex flex-col">
-              <iframe
-                src={getGoogleViewUrl()}
-                className="w-full flex-1 rounded-lg"
-                title={file.name}
-              />
-              <div className="flex items-center justify-center gap-4 mt-4 text-sm text-gray-500">
-                <span>No se ve? </span>
-                <a
-                  href={getGoogleViewUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-400 hover:text-indigo-300 underline"
-                >
-                  Abrir en Google Docs
-                </a>
-                <span>·</span>
-                <a
-                  href={downloadUrl}
-                  download
-                  className="text-indigo-400 hover:text-indigo-300 underline"
-                >
-                  Descargar
-                </a>
-              </div>
+            <div className="w-full h-[70vh] flex flex-col items-center justify-center p-12">
+              <div className="w-20 h-20 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6" dangerouslySetInnerHTML={{ __html: getIcon() }} />
+              <p className="text-gray-300 text-lg font-medium mb-2">{file.name}</p>
+              <p className="text-gray-500 text-sm mb-8 text-center max-w-md">
+                Word, Excel y PowerPoint no se pueden previsualizar en el navegador desde la red local.
+                Descarga el archivo y ábrelo con la aplicación de escritorio.
+              </p>
+              <a
+                href={downloadUrl}
+                download
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Descargar y abrir
+              </a>
             </div>
           )}
 
