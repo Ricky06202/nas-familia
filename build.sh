@@ -32,10 +32,10 @@ mkdir -p backend/frontend
 rm -rf backend/frontend/dist
 cp -r frontend/dist backend/frontend/dist
 
-# 3. Cross-compile Go backend
+# 3. Cross-compile Go backend (CGO disabled for pure-Go SQLite)
 echo "🔧 Building Go backend (GOOS=linux GOARCH=$GOARCH)..."
 cd backend
-GOOS=linux GOARCH=$GOARCH GOARM=$GOARM go build -ldflags="-s -w" -o "../$OUTPUT" .
+CGO_ENABLED=0 GOOS=linux GOARCH=$GOARCH GOARM=$GOARM go build -ldflags="-s -w" -o "../$OUTPUT" .
 cd ..
 
 echo ""
