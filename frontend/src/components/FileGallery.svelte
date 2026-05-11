@@ -26,6 +26,7 @@
 
     try {
       files = await api.files.list(profileId);
+      applyFilter();
       error = '';
     } catch (e) {
       error = 'Error al cargar archivos';
@@ -84,19 +85,21 @@
     }
   }
 
-  $: filteredFiles = filter === 'all'
-    ? files
-    : filter === 'images'
-      ? files.filter(f => isImage(f))
-      : filter === 'documents'
-        ? files.filter(f => isDocument(f))
-        : files.filter(f => !isImage(f) && !isDocument(f));
+  let filteredFiles: File[] = [];
+
+  function applyFilter() {
+    if (filter === 'all') { filteredFiles = files; return; }
+    if (filter === 'images') { filteredFiles = files.filter(x => isImage(x)); return; }
+    if (filter === 'documents') { filteredFiles = files.filter(x => isDocument(x)); return; }
+    filteredFiles = files.filter(x => !isImage(x) && !isDocument(x));
+  }
 
   async function deleteFile(file: File) {
     if (!confirm(`¿Eliminar "${file.name}"?`)) return;
     try {
       await api.files.delete(file.id);
       files = files.filter(f => f.id !== file.id);
+      applyFilter();
     } catch (e) {
       error = 'Error al eliminar archivo';
     }
@@ -112,7 +115,7 @@
   <div class="flex items-center gap-2 mb-6 flex-wrap">
     {#each ['all', 'images', 'documents', 'other'] as f}
       <button
-        on:click={() => filter = f}
+        on:click={() => { filter = f; applyFilter(); }}
         class="px-4 py-2 text-sm rounded-lg transition-all {filter === f ? 'bg-indigo-500/20 text-indigo-300' : 'text-gray-400 hover:text-white'}"
       >
         {f === 'all' ? 'Todos' : f === 'images' ? 'Imágenes' : f === 'documents' ? 'Documentos' : 'Otros'}
