@@ -33,6 +33,7 @@ export interface SystemStats {
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-cache',
     ...options,
   });
   if (!res.ok) {
@@ -66,7 +67,7 @@ export const api = {
 
   files: {
     list: (profileId: number) =>
-      request<File[]>(`/files?profile_id=${profileId}`),
+      request<File[]>(`/files?profile_id=${profileId}&_=${Date.now()}`),
     upload: async (profileId: number, files: FileList | File[]) => {
       const form = new FormData();
       form.append('profile_id', String(profileId));
