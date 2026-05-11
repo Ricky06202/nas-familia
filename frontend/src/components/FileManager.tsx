@@ -35,6 +35,7 @@ export default function FileManager() {
       const data = await api.files.list({
         profile_id: profileId,
         folder_id: currentFolderId,
+        root: currentFolderId === null ? true : undefined,
         search: search || undefined,
         sort: sort as 'name' | 'size' | 'date',
         order: order as 'asc' | 'desc',
