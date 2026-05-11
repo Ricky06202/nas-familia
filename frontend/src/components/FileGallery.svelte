@@ -84,16 +84,13 @@
     }
   }
 
-  function getFilteredFiles(): File[] {
-    switch (filter) {
-      case 'images': return files.filter(f => isImage(f));
-      case 'documents': return files.filter(f => isDocument(f));
-      case 'other': return files.filter(f => !isImage(f) && !isDocument(f));
-      default: return files;
-    }
-  }
-
-  $: filteredFiles = getFilteredFiles();
+  $: filteredFiles = filter === 'all'
+    ? files
+    : filter === 'images'
+      ? files.filter(f => isImage(f))
+      : filter === 'documents'
+        ? files.filter(f => isDocument(f))
+        : files.filter(f => !isImage(f) && !isDocument(f));
 
   async function deleteFile(file: File) {
     if (!confirm(`¿Eliminar "${file.name}"?`)) return;
