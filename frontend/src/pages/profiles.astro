@@ -1,0 +1,12 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProfileSelector from '../components/ProfileSelector.svelte';
+---
+
+<Layout title="¿Quién eres? - La Familia Sanjur">
+  <div class="min-h-screen bg-[#0a0a1a] flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-3xl">
+      <ProfileSelector client:load />
+    </div>
+  </div>
+</Layout>

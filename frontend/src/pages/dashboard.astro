@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.svelte';
+import SystemStats from '../components/SystemStats.svelte';
+---
+
+<Layout title="Dashboard - La Familia Sanjur">
+  <div class="min-h-screen bg-[#0a0a1a]">
+    <Navbar client:load />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">Dashboard del NAS</h1>
+        <p class="text-gray-400 mt-1">Estado actual del sistema</p>
+      </div>
+      <SystemStats client:load />
+    </main>
+  </div>
+</Layout>

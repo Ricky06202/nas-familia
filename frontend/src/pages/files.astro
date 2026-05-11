@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.svelte';
+import FileUploader from '../components/FileUploader.svelte';
+import FileGallery from '../components/FileGallery.svelte';
+---
+
+<Layout title="Archivos - La Familia Sanjur">
+  <div class="min-h-screen bg-[#0a0a1a]">
+    <Navbar client:load />
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white">Mis Archivos</h1>
+        <p class="text-gray-400 mt-1">Sube y comparte archivos con la familia</p>
+      </div>
+      <FileUploader client:load />
+      <div class="mt-8">
+        <FileGallery client:load />
+      </div>
+    </main>
+  </div>
+</Layout>
