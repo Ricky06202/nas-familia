@@ -1,6 +1,7 @@
 # Binaries
 nas-familia
-nas-familia.exe
+nas-familia-*
+*.exe
 
 # Data (created at runtime)
 data/
