@@ -62,8 +62,7 @@ export default function FileGallery({
   onView,
   onMove,
   onCopy,
-  selectedIds,
-  onSelectionChange,
+  onBatchAction,
 }: {
   files: File[];
   search: string;
@@ -76,13 +75,10 @@ export default function FileGallery({
   onView: (f: File) => void;
   onMove?: (f: File) => void;
   onCopy?: (f: File) => void;
-  selectedIds?: Set<number>;
-  onSelectionChange?: (ids: Set<number>) => void;
-  onBatchMove?: () => void;
-  onBatchCopy?: () => void;
-  onBatchDelete?: () => void;
+  onBatchAction?: (action: 'move' | 'copy' | 'delete', ids: number[]) => void;
 }) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const filteredFiles = useMemo(() => {
     let result = files;
@@ -94,14 +90,10 @@ export default function FileGallery({
     return result;
   }, [files, typeFilter]);
 
-  const sel = selectedIds ?? new Set<number>();
-
-  function toggleSelect(file: File, e: React.MouseEvent) {
-    e.stopPropagation();
-    const next = new Set(sel);
-    if (next.has(file.id)) next.delete(file.id);
-    else next.add(file.id);
-    onSelectionChange?.(next);
+  function toggleId(id: number) {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
   }
 
   return (
@@ -120,29 +112,17 @@ export default function FileGallery({
             className="w-full pl-10 pr-4 py-2 bg-[#0a0a1a] border border-gray-700 rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
-
         <div className="flex items-center gap-2">
-          <select
-            value={sort}
-            onChange={e => onSortChange(e.target.value)}
-            className="px-3 py-2 bg-[#0a0a1a] border border-gray-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            {SORT_OPTIONS.map(opt => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
+          <select value={sort} onChange={e => onSortChange(e.target.value)}
+            className="px-3 py-2 bg-[#0a0a1a] border border-gray-700 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
-          <button
-            onClick={onOrderToggle}
-            className="p-2 bg-[#0a0a1a] border border-gray-700 rounded-xl text-gray-400 hover:text-white transition-colors"
-          >
+          <button onClick={onOrderToggle}
+            className="p-2 bg-[#0a0a1a] border border-gray-700 rounded-xl text-gray-400 hover:text-white transition-colors">
             {order === 'asc' ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
-              </svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" />
-              </svg>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" /></svg>
             )}
           </button>
         </div>
@@ -151,43 +131,30 @@ export default function FileGallery({
       {/* Type filters */}
       <div className="flex items-center gap-2 mb-6 flex-wrap">
         {TYPE_FILTERS.map(opt => (
-          <button
-            key={opt.key}
-            onClick={() => setTypeFilter(opt.key)}
-            className={`px-4 py-2 text-sm rounded-lg transition-all ${typeFilter === opt.key ? 'bg-indigo-500/20 text-indigo-300' : 'text-gray-400 hover:text-white'}`}
-          >
+          <button key={opt.key} onClick={() => setTypeFilter(opt.key)}
+            className={`px-4 py-2 text-sm rounded-lg transition-all ${typeFilter === opt.key ? 'bg-indigo-500/20 text-indigo-300' : 'text-gray-400 hover:text-white'}`}>
             {opt.label}
           </button>
         ))}
       </div>
 
       {/* Selection bar */}
-      {sel.size > 0 && (
+      {selectedIds.length > 0 && (
         <div className="flex items-center justify-between px-4 py-3 mb-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-          <span className="text-sm text-indigo-300">{sel.size} archivo(s) seleccionado(s)</span>
+          <span className="text-sm text-indigo-300">{selectedIds.length} archivo(s) seleccionado(s)</span>
           <div className="flex items-center gap-2">
-            {onBatchMove && (
-              <button onClick={() => onBatchMove()}
-                className="px-3 py-1.5 text-xs bg-amber-500/20 text-amber-300 rounded-lg hover:bg-amber-500/30 transition-colors">
-                Mover
-              </button>
+            {onBatchAction && (
+              <>
+                <button onClick={() => onBatchAction('move', selectedIds)}
+                  className="px-3 py-1.5 text-xs bg-amber-500/20 text-amber-300 rounded-lg hover:bg-amber-500/30 transition-colors">Mover</button>
+                <button onClick={() => onBatchAction('copy', selectedIds)}
+                  className="px-3 py-1.5 text-xs bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors">Copiar</button>
+                <button onClick={() => onBatchAction('delete', selectedIds)}
+                  className="px-3 py-1.5 text-xs bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors">Eliminar</button>
+              </>
             )}
-            {onBatchCopy && (
-              <button onClick={() => onBatchCopy()}
-                className="px-3 py-1.5 text-xs bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors">
-                Copiar
-              </button>
-            )}
-            {onBatchDelete && (
-              <button onClick={() => onBatchDelete()}
-                className="px-3 py-1.5 text-xs bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors">
-                Eliminar
-              </button>
-            )}
-            <button onClick={() => onSelectionChange?.(new Set())}
-              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors">
-              Cancelar
-            </button>
+            <button onClick={() => setSelectedIds([])}
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors">Cancelar</button>
           </div>
         </div>
       )}
@@ -208,34 +175,29 @@ export default function FileGallery({
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filteredFiles.map(file => {
-            const isSelected = sel.has(file.id);
+            const isSelected = selectedIds.includes(file.id);
             return (
-              <div
-                key={file.id}
+              <div key={file.id}
                 className={`group relative bg-[#1a1a2e] rounded-xl overflow-hidden border transition-all duration-300 cursor-pointer ${isSelected ? 'border-indigo-400 ring-2 ring-indigo-400/30' : 'border-gray-800 hover:border-indigo-500/30'}`}
                 onClick={() => {
-                  if (sel.size > 0) {
-                    const next = new Set(sel);
-                    if (next.has(file.id)) next.delete(file.id); else next.add(file.id);
-                    onSelectionChange?.(next);
+                  if (selectedIds.length > 0) {
+                    toggleId(file.id);
                   } else {
                     onView(file);
                   }
                 }}
               >
-                {onSelectionChange && (
-                  <div
-                    className="absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-all"
-                    style={{ background: isSelected ? '#818cf8' : 'rgba(0,0,0,0.5)' }}
-                    onClick={(e) => toggleSelect(file, e)}
-                  >
-                    {isSelected && (
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
-                  </div>
-                )}
+                {/* Checkbox */}
+                <div className="absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-all"
+                  style={{ background: isSelected ? '#818cf8' : 'rgba(0,0,0,0.5)' }}
+                  onClick={(e) => { e.stopPropagation(); toggleId(file.id); }}
+                >
+                  {isSelected && (
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
 
                 <div className="aspect-square flex items-center justify-center bg-[#0a0a1a] overflow-hidden">
                   {isImage(file) && file.thumbnail ? (
