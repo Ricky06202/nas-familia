@@ -83,6 +83,8 @@ export default function FileGallery({
   onOrderToggle,
   onDelete,
   onView,
+  onMove,
+  onCopy,
 }: {
   files: File[];
   search: string;
@@ -93,6 +95,8 @@ export default function FileGallery({
   onOrderToggle: () => void;
   onDelete: (f: File) => void;
   onView: (f: File) => void;
+  onMove?: (f: File) => void;
+  onCopy?: (f: File) => void;
 }) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
 
@@ -219,6 +223,28 @@ export default function FileGallery({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                 </button>
+                {onMove && (
+                  <button
+                    onClick={e => { e.stopPropagation(); onMove(file); }}
+                    className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-400/20 transition-colors"
+                    title="Mover"
+                  >
+                    <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    </svg>
+                  </button>
+                )}
+                {onCopy && (
+                  <button
+                    onClick={e => { e.stopPropagation(); onCopy(file); }}
+                    className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-blue-400/20 transition-colors"
+                    title="Copiar"
+                  >
+                    <svg className="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                )}
                 <button
                   onClick={e => { e.stopPropagation(); onDelete(file); }}
                   className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center hover:bg-red-500/40 transition-colors"

@@ -194,6 +194,60 @@ func GetThumbnail(c echo.Context) error {
 	return c.File(thumbPath)
 }
 
+func CopyFile(c echo.Context) error {
+	id := c.Param("id")
+	var original models.File
+	if err := database.DB.First(&original, id).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "file not found"})
+	}
+
+	storagePath := getStoragePath()
+	ext := filepath.Ext(original.Path)
+	uniqueName := fmt.Sprintf("%s_%d%s", uuid.New().String(), time.Now().UnixNano(), ext)
+	destPath := filepath.Join(storagePath, uniqueName)
+
+	srcPath := filepath.Join(storagePath, original.Path)
+	input, err := os.ReadFile(srcPath)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to read file"})
+	}
+	if err := os.WriteFile(destPath, input, 0644); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "failed to write file"})
+	}
+
+	var folderID *uint
+	var copyName string
+	var inputBody struct {
+		FolderID *uint  `json:"folder_id"`
+		Name     string `json:"name"`
+	}
+	if err := c.Bind(&inputBody); err == nil {
+		folderID = inputBody.FolderID
+		copyName = strings.TrimSpace(inputBody.Name)
+	}
+	if copyName == "" {
+		copyName = strings.TrimSuffix(original.OriginalName, ext) + " (copia)" + ext
+	}
+
+	copied := models.File{
+		ProfileID:    original.ProfileID,
+		FolderID:     folderID,
+		Name:         copyName,
+		OriginalName: copyName,
+		Size:         original.Size,
+		MimeType:     original.MimeType,
+		Path:         uniqueName,
+	}
+
+	if isImage(copied.MimeType) {
+		thumbPath := generateThumbnail(destPath, uniqueName)
+		copied.Thumbnail = thumbPath
+	}
+
+	database.DB.Create(&copied)
+	return c.JSON(http.StatusCreated, copied)
+}
+
 func isImage(mimeType string) bool {
 	return strings.HasPrefix(mimeType, "image/") &&
 		!strings.HasPrefix(mimeType, "image/svg+xml")

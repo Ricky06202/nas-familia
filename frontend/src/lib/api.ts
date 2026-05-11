@@ -136,6 +136,11 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify({ folder_id: folderId }),
       }),
+    copy: (id: number, folderId?: number | null) =>
+      request<File>(`/files/${id}/copy`, {
+        method: 'POST',
+        body: JSON.stringify({ folder_id: folderId }),
+      }),
     getThumbnailUrl: (id: number) => `${API_BASE}/files/${id}/thumbnail`,
     getDownloadUrl: (id: number) => `${API_BASE}/files/${id}/download`,
     getViewUrl: (id: number) => `${API_BASE}/files/${id}/view`,

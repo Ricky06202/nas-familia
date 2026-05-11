@@ -45,6 +45,7 @@ func main() {
 	api.GET("/files/:id/thumbnail", handlers.GetThumbnail)
 	api.GET("/files/:id/view", handlers.ViewFile)
 	api.PUT("/files/:id/move", handlers.MoveFile)
+	api.POST("/files/:id/copy", handlers.CopyFile)
 
 	api.GET("/folders", handlers.GetFolders)
 	api.POST("/folders", handlers.CreateFolder)
