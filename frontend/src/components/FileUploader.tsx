@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { api } from '../lib/api';
 
-export default function FileUploader({ onUpload }: { onUpload?: () => void }) {
+export default function FileUploader({ folderId, onUpload }: { folderId?: number | null; onUpload?: () => void }) {
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState('');
@@ -49,9 +49,7 @@ export default function FileUploader({ onUpload }: { onUpload?: () => void }) {
     setSuccess('');
 
     try {
-      const folderIdStr = localStorage.getItem('nas_folder_id');
-      const folderId = folderIdStr ? Number(folderIdStr) : undefined;
-      await api.files.upload(profileId, fileList, folderId);
+      await api.files.upload(profileId, fileList, folderId ?? undefined);
       setSuccess(`¡Archivos subidos correctamente!`);
       onUpload?.();
     } catch {

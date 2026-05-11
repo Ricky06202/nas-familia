@@ -83,7 +83,7 @@ export default function FileManager() {
 
       {/* Main content */}
       <div className="flex-1 min-w-0 space-y-6">
-        <FileUploader onUpload={handleUpload} />
+        <FileUploader folderId={currentFolderId} onUpload={handleUpload} />
 
         <div>
           {loading ? (
