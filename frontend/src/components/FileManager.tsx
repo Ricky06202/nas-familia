@@ -16,7 +16,9 @@ export default function FileManager() {
   const [viewerFile, setViewerFile] = useState<FileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionFile, setActionFile] = useState<FileType | null>(null);
-  const [action, setAction] = useState<'move' | 'copy' | null>(null);
+  const [action, setAction] = useState<'move' | 'copy' | 'batch' | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [batchAction, setBatchAction] = useState<'move' | 'copy' | 'delete' | null>(null);
 
   useEffect(() => {
     setProfileId(Number(localStorage.getItem('nas_profile_id') || '0'));
@@ -79,6 +81,34 @@ export default function FileManager() {
     setAction('copy');
   }
 
+  function openBatch(action: 'move' | 'copy' | 'delete') {
+    if (selectedIds.size === 0) return;
+    if (action === 'delete') {
+      if (!confirm(`¿Eliminar ${selectedIds.size} archivo(s)?`)) return;
+      api.files.batchDelete([...selectedIds]).then(() => {
+        setSelectedIds(new Set());
+        fetchFiles();
+      });
+      return;
+    }
+    setBatchAction(action);
+  }
+
+  async function handleBatchAction(targetFolderId: number | null) {
+    const ids = [...selectedIds];
+    try {
+      if (batchAction === 'move') {
+        await api.files.batchMove(ids, targetFolderId);
+      } else if (batchAction === 'copy') {
+        await api.files.batchCopy(ids, targetFolderId);
+      }
+      setBatchAction(null);
+      setSelectedIds(new Set());
+      fetchFiles();
+      fetchFolders();
+    } catch {}
+  }
+
   async function handleAction(targetFolderId: number | null) {
     if (!actionFile) return;
     try {
@@ -126,6 +156,11 @@ export default function FileManager() {
           onView={f => setViewerFile(f)}
           onMove={openMove}
           onCopy={openCopy}
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+          onBatchMove={() => openBatch('move')}
+          onBatchCopy={() => openBatch('copy')}
+          onBatchDelete={() => openBatch('delete')}
         />
       </div>
 
@@ -146,6 +181,43 @@ export default function FileManager() {
       {/* File viewer modal */}
       {viewerFile && (
         <FileViewer file={viewerFile} onClose={() => setViewerFile(null)} />
+      )}
+
+      {/* Batch folder picker */}
+      {batchAction && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={e => { if (e.target === e.currentTarget) setBatchAction(null); }}
+        >
+          <div className="bg-[#1a1a2e] rounded-2xl border border-gray-800 shadow-2xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {batchAction === 'move' ? 'Mover' : 'Copiar'} {selectedIds.size} archivo(s)
+            </h3>
+            <p className="text-sm text-gray-400 mb-4">Selecciona la carpeta de destino</p>
+            <div className="space-y-1 max-h-60 overflow-auto">
+              <button onClick={() => handleBatchAction(null)}
+                className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                </svg>
+                Raíz (sin carpeta)
+              </button>
+              {folders.map(folder => (
+                <button key={folder.id} onClick={() => handleBatchAction(folder.id)}
+                  className="w-full text-left px-4 py-3 rounded-xl text-sm text-gray-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
+                  <svg className="w-5 h-5 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M2 6a2 2 0 012-2h5l2 2h9a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                  </svg>
+                  <span className="truncate">{folder.name}</span>
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setBatchAction(null)}
+              className="mt-4 w-full px-4 py-3 bg-gray-800 text-gray-300 rounded-xl font-medium hover:bg-gray-700 transition-colors">
+              Cancelar
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Move/Copy folder picker */}

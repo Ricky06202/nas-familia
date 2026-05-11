@@ -19,18 +19,9 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-function isImage(file: File): boolean {
-  return file.mime_type.startsWith('image/') && !file.mime_type.includes('svg');
-}
-
-function isVideo(file: File): boolean {
-  return file.mime_type.startsWith('video/');
-}
-
-function isAudio(file: File): boolean {
-  return file.mime_type.startsWith('audio/');
-}
-
+function isImage(file: File): boolean { return file.mime_type.startsWith('image/') && !file.mime_type.includes('svg'); }
+function isVideo(file: File): boolean { return file.mime_type.startsWith('video/'); }
+function isAudio(file: File): boolean { return file.mime_type.startsWith('audio/'); }
 function getExt(file: File) { return file.name.toLowerCase().slice(file.name.lastIndexOf('.')); }
 function isWord(file: File) { return ['.doc', '.docx'].includes(getExt(file)); }
 function isExcel(file: File) { return ['.xls', '.xlsx'].includes(getExt(file)); }
@@ -38,27 +29,13 @@ function isPpt(file: File) { return ['.ppt', '.pptx'].includes(getExt(file)); }
 function isPdf(file: File) { return file.mime_type === 'application/pdf' || getExt(file) === '.pdf'; }
 
 function getIconForType(file: File): string {
-  if (isImage(file)) {
-    return '<svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>';
-  }
-  if (isVideo(file)) {
-    return '<svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>';
-  }
-  if (isAudio(file)) {
-    return '<svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>';
-  }
-  if (isPdf(file)) {
-    return '<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /><path d="M7 11l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>';
-  }
-  if (isWord(file)) {
-    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#1e40af" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l2 7 2-5 2 5 2-7"/></svg>';
-  }
-  if (isExcel(file)) {
-    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#059669" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l3 4-3 4m8-8l-3 4 3 4"/></svg>';
-  }
-  if (isPpt(file)) {
-    return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#ea580c" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M9 9h5a2 2 0 012 2v1a2 2 0 01-2 2h-5V9z"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M12 14v3"/></svg>';
-  }
+  if (isImage(file)) return '<svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>';
+  if (isVideo(file)) return '<svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>';
+  if (isAudio(file)) return '<svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>';
+  if (isPdf(file)) return '<svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /><path d="M7 11l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>';
+  if (isWord(file)) return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#1e40af" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l2 7 2-5 2 5 2-7"/></svg>';
+  if (isExcel(file)) return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#059669" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M8 9l3 4-3 4m8-8l-3 4 3 4"/></svg>';
+  if (isPpt(file)) return '<svg class="w-8 h-8" fill="none" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#ea580c" opacity="0.9"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M9 9h5a2 2 0 012 2v1a2 2 0 01-2 2h-5V9z"/><path stroke="#fff" stroke-linecap="round" stroke-width="1.5" d="M12 14v3"/></svg>';
   return '<svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>';
 }
 
@@ -85,6 +62,8 @@ export default function FileGallery({
   onView,
   onMove,
   onCopy,
+  selectedIds,
+  onSelectionChange,
 }: {
   files: File[];
   search: string;
@@ -97,20 +76,33 @@ export default function FileGallery({
   onView: (f: File) => void;
   onMove?: (f: File) => void;
   onCopy?: (f: File) => void;
+  selectedIds?: Set<number>;
+  onSelectionChange?: (ids: Set<number>) => void;
+  onBatchMove?: () => void;
+  onBatchCopy?: () => void;
+  onBatchDelete?: () => void;
 }) {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
 
   const filteredFiles = useMemo(() => {
     let result = files;
-
     if (typeFilter === 'images') result = result.filter(f => isImage(f));
     else if (typeFilter === 'videos') result = result.filter(f => isVideo(f));
     else if (typeFilter === 'audio') result = result.filter(f => isAudio(f));
     else if (typeFilter === 'documents') result = result.filter(f => isPdf(f) || isWord(f) || isExcel(f) || isPpt(f));
     else if (typeFilter === 'other') result = result.filter(f => !isImage(f) && !isVideo(f) && !isAudio(f) && !isPdf(f) && !isWord(f) && !isExcel(f) && !isPpt(f));
-
     return result;
   }, [files, typeFilter]);
+
+  const sel = selectedIds ?? new Set<number>();
+
+  function toggleSelect(file: File, e: React.MouseEvent) {
+    e.stopPropagation();
+    const next = new Set(sel);
+    if (next.has(file.id)) next.delete(file.id);
+    else next.add(file.id);
+    onSelectionChange?.(next);
+  }
 
   return (
     <div>
@@ -169,6 +161,37 @@ export default function FileGallery({
         ))}
       </div>
 
+      {/* Selection bar */}
+      {sel.size > 0 && (
+        <div className="flex items-center justify-between px-4 py-3 mb-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
+          <span className="text-sm text-indigo-300">{sel.size} archivo(s) seleccionado(s)</span>
+          <div className="flex items-center gap-2">
+            {onBatchMove && (
+              <button onClick={() => onBatchMove()}
+                className="px-3 py-1.5 text-xs bg-amber-500/20 text-amber-300 rounded-lg hover:bg-amber-500/30 transition-colors">
+                Mover
+              </button>
+            )}
+            {onBatchCopy && (
+              <button onClick={() => onBatchCopy()}
+                className="px-3 py-1.5 text-xs bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-colors">
+                Copiar
+              </button>
+            )}
+            {onBatchDelete && (
+              <button onClick={() => onBatchDelete()}
+                className="px-3 py-1.5 text-xs bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-colors">
+                Eliminar
+              </button>
+            )}
+            <button onClick={() => onSelectionChange?.(new Set())}
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Files grid */}
       {loading ? (
         <div className="flex justify-center items-center h-48 bg-[#1a1a2e] rounded-2xl border border-gray-800">
@@ -184,87 +207,93 @@ export default function FileGallery({
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {filteredFiles.map(file => (
-            <div
-              key={file.id}
-              className="group relative bg-[#1a1a2e] rounded-xl overflow-hidden border border-gray-800 hover:border-indigo-500/30 transition-all duration-300 cursor-pointer"
-              onClick={() => onView(file)}
-            >
-              <div className="aspect-square flex items-center justify-center bg-[#0a0a1a] overflow-hidden">
-                {isImage(file) && file.thumbnail ? (
-                  <img
-                    src={api.files.getThumbnailUrl(file.id)}
-                    alt={file.name}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="text-center" dangerouslySetInnerHTML={{ __html: getIconForType(file) }} />
-                )}
-              </div>
-
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                <button
-                  onClick={e => { e.stopPropagation(); onView(file); }}
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-                  title="Ver"
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={e => { e.stopPropagation(); window.open(api.files.getDownloadUrl(file.id), '_blank'); }}
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
-                  title="Descargar"
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-                {onMove && (
-                  <button
-                    onClick={e => { e.stopPropagation(); onMove(file); }}
-                    className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-400/20 transition-colors"
-                    title="Mover"
+          {filteredFiles.map(file => {
+            const isSelected = sel.has(file.id);
+            return (
+              <div
+                key={file.id}
+                className={`group relative bg-[#1a1a2e] rounded-xl overflow-hidden border transition-all duration-300 cursor-pointer ${isSelected ? 'border-indigo-400 ring-2 ring-indigo-400/30' : 'border-gray-800 hover:border-indigo-500/30'}`}
+                onClick={() => {
+                  if (sel.size > 0) {
+                    const next = new Set(sel);
+                    if (next.has(file.id)) next.delete(file.id); else next.add(file.id);
+                    onSelectionChange?.(next);
+                  } else {
+                    onView(file);
+                  }
+                }}
+              >
+                {onSelectionChange && (
+                  <div
+                    className="absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-all"
+                    style={{ background: isSelected ? '#818cf8' : 'rgba(0,0,0,0.5)' }}
+                    onClick={(e) => toggleSelect(file, e)}
                   >
-                    <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                    {isSelected && (
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                )}
+
+                <div className="aspect-square flex items-center justify-center bg-[#0a0a1a] overflow-hidden">
+                  {isImage(file) && file.thumbnail ? (
+                    <img src={api.files.getThumbnailUrl(file.id)} alt={file.name}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
+                  ) : (
+                    <div className="text-center" dangerouslySetInnerHTML={{ __html: getIconForType(file) }} />
+                  )}
+                </div>
+
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                  <button onClick={e => { e.stopPropagation(); onView(file); }}
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors" title="Ver">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   </button>
-                )}
-                {onCopy && (
-                  <button
-                    onClick={e => { e.stopPropagation(); onCopy(file); }}
-                    className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-blue-400/20 transition-colors"
-                    title="Copiar"
-                  >
-                    <svg className="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  <button onClick={e => { e.stopPropagation(); window.open(api.files.getDownloadUrl(file.id), '_blank'); }}
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors" title="Descargar">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                   </button>
-                )}
-                <button
-                  onClick={e => { e.stopPropagation(); onDelete(file); }}
-                  className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center hover:bg-red-500/40 transition-colors"
-                  title="Eliminar"
-                >
-                  <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
+                  {onMove && (
+                    <button onClick={e => { e.stopPropagation(); onMove(file); }}
+                      className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-amber-400/20 transition-colors" title="Mover">
+                      <svg className="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                      </svg>
+                    </button>
+                  )}
+                  {onCopy && (
+                    <button onClick={e => { e.stopPropagation(); onCopy(file); }}
+                      className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-blue-400/20 transition-colors" title="Copiar">
+                      <svg className="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  )}
+                  <button onClick={e => { e.stopPropagation(); onDelete(file); }}
+                    className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center hover:bg-red-500/40 transition-colors" title="Eliminar">
+                    <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
 
-              <div className="p-2">
-                <p className="text-xs text-gray-300 truncate">{file.name}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
-                  <span className="text-xs text-gray-600">{formatDate(file.created_at)}</span>
+                <div className="p-2">
+                  <p className="text-xs text-gray-300 truncate">{file.name}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
+                    <span className="text-xs text-gray-600">{formatDate(file.created_at)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -248,6 +248,100 @@ func CopyFile(c echo.Context) error {
 	return c.JSON(http.StatusCreated, copied)
 }
 
+func BatchDelete(c echo.Context) error {
+	var input struct {
+		IDs []uint `json:"ids"`
+	}
+	if err := c.Bind(&input); err != nil || len(input.IDs) == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "ids required"})
+	}
+
+	storagePath := getStoragePath()
+	thumbPath := getThumbPath()
+
+	for _, id := range input.IDs {
+		var file models.File
+		if err := database.DB.First(&file, id).Error; err != nil {
+			continue
+		}
+		os.Remove(filepath.Join(storagePath, file.Path))
+		if file.Thumbnail != "" {
+			os.Remove(filepath.Join(thumbPath, file.Thumbnail))
+		}
+		database.DB.Delete(&file)
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
+func BatchMove(c echo.Context) error {
+	var input struct {
+		IDs      []uint `json:"ids"`
+		FolderID *uint  `json:"folder_id"`
+	}
+	if err := c.Bind(&input); err != nil || len(input.IDs) == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "ids required"})
+	}
+
+	database.DB.Model(&models.File{}).Where("id IN ?", input.IDs).Update("folder_id", input.FolderID)
+	return c.NoContent(http.StatusNoContent)
+}
+
+func BatchCopy(c echo.Context) error {
+	var req struct {
+		IDs      []uint `json:"ids"`
+		FolderID *uint  `json:"folder_id"`
+	}
+	if err := c.Bind(&req); err != nil || len(req.IDs) == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "ids required"})
+	}
+
+	storagePath := getStoragePath()
+
+	for _, id := range req.IDs {
+		var original models.File
+		if err := database.DB.First(&original, id).Error; err != nil {
+			continue
+		}
+
+		ext := filepath.Ext(original.Path)
+		uniqueName := fmt.Sprintf("%s_%d%s", uuid.New().String(), time.Now().UnixNano(), ext)
+		destPath := filepath.Join(storagePath, uniqueName)
+
+		srcPath := filepath.Join(storagePath, original.Path)
+		fileData, err := os.ReadFile(srcPath)
+		if err != nil {
+			continue
+		}
+		if err := os.WriteFile(destPath, fileData, 0644); err != nil {
+			continue
+		}
+
+		folderID := req.FolderID
+		if folderID == nil {
+			folderID = original.FolderID
+		}
+
+		copied := models.File{
+			ProfileID:    original.ProfileID,
+			FolderID:     folderID,
+			Name:         original.Name,
+			OriginalName: original.OriginalName,
+			Size:         original.Size,
+			MimeType:     original.MimeType,
+			Path:         uniqueName,
+		}
+
+		if isImage(copied.MimeType) {
+			copied.Thumbnail = generateThumbnail(destPath, uniqueName)
+		}
+
+		database.DB.Create(&copied)
+	}
+
+	return c.JSON(http.StatusCreated, map[string]string{"status": "ok"})
+}
+
 func isImage(mimeType string) bool {
 	return strings.HasPrefix(mimeType, "image/") &&
 		!strings.HasPrefix(mimeType, "image/svg+xml")

@@ -141,6 +141,21 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ folder_id: folderId }),
       }),
+    batchDelete: (ids: number[]) =>
+      request<void>('/files/batch/delete', {
+        method: 'POST',
+        body: JSON.stringify({ ids }),
+      }),
+    batchMove: (ids: number[], folderId: number | null) =>
+      request<void>('/files/batch/move', {
+        method: 'POST',
+        body: JSON.stringify({ ids, folder_id: folderId }),
+      }),
+    batchCopy: (ids: number[], folderId?: number | null) =>
+      request<void>('/files/batch/copy', {
+        method: 'POST',
+        body: JSON.stringify({ ids, folder_id: folderId }),
+      }),
     getThumbnailUrl: (id: number) => `${API_BASE}/files/${id}/thumbnail`,
     getDownloadUrl: (id: number) => `${API_BASE}/files/${id}/download`,
     getViewUrl: (id: number) => `${API_BASE}/files/${id}/view`,
