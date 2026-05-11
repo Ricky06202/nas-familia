@@ -188,8 +188,8 @@ export default function FileGallery({
                 }}
               >
                 {/* Checkbox */}
-                <div className="absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-all"
-                  style={{ background: isSelected ? '#818cf8' : 'rgba(0,0,0,0.5)' }}
+                <div className="absolute top-2 left-2 z-10 w-6 h-6 rounded-md flex items-center justify-center cursor-pointer transition-all border border-white/30"
+                  style={{ background: isSelected ? '#818cf8' : 'rgba(0,0,0,0.7)' }}
                   onClick={(e) => { e.stopPropagation(); toggleId(file.id); }}
                 >
                   {isSelected && (
